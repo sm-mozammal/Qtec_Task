@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qtec_task/core/constants/app_colors.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
