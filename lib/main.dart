@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:qtec_task/config/injection.dart';
 import 'package:qtec_task/config/theme/custome_theme.dart';
 import 'package:qtec_task/core/services/navigation_service.dart';
+import 'package:qtec_task/core/services/networks/dio/dio.dart';
 import 'package:qtec_task/core/utils/helper_methods.dart';
 import 'package:qtec_task/loading_screen.dart';
 
@@ -13,6 +14,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   diSetup();
+  DioSingleton.instance.create();
+
   runApp(const MyApp());
 }
 

@@ -1,8 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:qtec_task/common/widgets/custom_textfiled.dart';
 import 'package:qtec_task/core/constants/assets.dart';
 import 'package:qtec_task/core/utils/ui_helpers.dart';
+import 'package:qtec_task/features/home/data/data_sources/product_remote_data_source.dart';
+import 'package:qtec_task/features/home/data/repositories/product_repository_impl.dart';
+import 'package:qtec_task/features/home/domain/uses_cases/get_produts.dart';
 import 'package:qtec_task/features/home/presentations/widgets/product_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,6 +18,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    ProductRemoteDataSource remoteDataSource = ProductRemoteDataSourceImpl();
+    ProductRepositoryImpl todoRepository = ProductRepositoryImpl(
+      remoteDataSource: remoteDataSource,
+    );
+    GetProducts getTodos = GetProducts(productRepositoy: todoRepository);
+    getTodos.call(2, 10);
+
+    log('message: $getTodos');
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
