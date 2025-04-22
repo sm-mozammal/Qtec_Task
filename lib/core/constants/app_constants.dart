@@ -14,6 +14,7 @@ class AppRegExpText {
 
 const String kImageUrl = 'imageUrl';
 const String kKeyIsLoggedIn = 'isLogin';
+const String kKeyAccessToken = 'token';
 
 class DefaultValue {
   static const bool kDefaultBoolean = false;
