@@ -1,9 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:qtec_task/core/constants/assets.dart';
 import 'package:qtec_task/core/constants/text_font_style.dart';
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({super.key});
+  final String productName;
+  final String price;
+  final String imageUrl;
+  const ProductCard(
+      {super.key,
+      required this.productName,
+      required this.price,
+      required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -17,19 +24,21 @@ class ProductCard extends StatelessWidget {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           ),
-          child: Image.asset(
-            Assets.image,
+          child: CachedNetworkImage(
+            width: double.infinity,
+            imageUrl: imageUrl,
             fit: BoxFit.cover,
+            placeholder: (context, url) => Container(),
           ),
         ),
         const SizedBox(height: 8),
         Text(
-          'Allen Solly Regular fit cotton shirt',
+          productName,
           style: TextFontStyle.textStyle12Roboto400,
         ),
         const SizedBox(height: 4),
-        const Text(
-          '\$99.99',
+        Text(
+          '\$$price',
           style: TextStyle(fontSize: 14, color: Colors.grey),
         ),
       ],

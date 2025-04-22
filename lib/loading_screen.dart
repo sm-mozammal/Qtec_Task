@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qtec_task/core/utils/helper_methods.dart';
-import 'package:qtec_task/features/home/presentations/home_screen.dart';
+import 'package:qtec_task/features/home/presentations/screen/home_screen.dart';
 import 'welcome_screen.dart';
 
 class Loading extends StatefulWidget {

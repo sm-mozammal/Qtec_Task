@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:qtec_task/config/injection.dart';
@@ -8,6 +9,7 @@ import 'package:qtec_task/config/theme/custome_theme.dart';
 import 'package:qtec_task/core/services/navigation_service.dart';
 import 'package:qtec_task/core/services/networks/dio/dio.dart';
 import 'package:qtec_task/core/utils/helper_methods.dart';
+import 'package:qtec_task/features/home/presentations/bloc/product_bloc.dart';
 import 'package:qtec_task/loading_screen.dart';
 
 void main() async {
@@ -76,18 +78,25 @@ class MobileLayout extends StatelessWidget {
         minTextAdapt: true,
         splitScreenMode: true,
         builder: (_, context) {
-          return MaterialApp(
-            theme: ThemeData(
-              primarySwatch: CustomTheme.kToDark,
-              useMaterial3: false,
-              scaffoldBackgroundColor: Colors.white,
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (BuildContext context) => ProductBloc(),
+              ),
+            ],
+            child: MaterialApp(
+              theme: ThemeData(
+                primarySwatch: CustomTheme.kToDark,
+                useMaterial3: false,
+                scaffoldBackgroundColor: Colors.white,
+              ),
+              debugShowCheckedModeBanner: false,
+              builder: (context, widget) {
+                return MediaQuery(data: MediaQuery.of(context), child: widget!);
+              },
+              navigatorKey: NavigationService.navigatorKey,
+              home: Loading(),
             ),
-            debugShowCheckedModeBanner: false,
-            builder: (context, widget) {
-              return MediaQuery(data: MediaQuery.of(context), child: widget!);
-            },
-            navigatorKey: NavigationService.navigatorKey,
-            home: Loading(),
           );
         });
   }
