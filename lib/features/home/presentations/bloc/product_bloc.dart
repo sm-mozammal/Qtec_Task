@@ -28,9 +28,12 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     if (event.isPagination) {
       // Avoid calling again if already paginating
       if (isPaginating || isLastPage) return;
+
+      // Check if we are at the last page
       isPaginating = true;
       ToastUtil.showShortToast('Loading more products...');
     } else {
+      // Resetting the state for a new fetch
       emit(ProductLoadingState());
       currentPage = 1;
       allProducts.clear();
@@ -38,21 +41,30 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     }
 
     try {
+      // Check if we are at the last page
       ProductRemoteDataSource remoteDataSource = ProductRemoteDataSourceImpl();
+
+      // Create a new instance of ProductRepositoryImpl
       ProductRepositoryImpl repository =
           ProductRepositoryImpl(remoteDataSource: remoteDataSource);
+
+      // Create a new instance of GetProducts
       GetProducts getProducts = GetProducts(productRepositoy: repository);
 
+      // Call the use case to fetch products
       final response = await getProducts.call(currentPage, event.limit);
 
       if (response.products.isEmpty) {
+        // If no products are returned, set isLastPage to true
         isLastPage = true;
         ToastUtil.showLongToast('No more products available');
       } else {
+        // Add the new products to the existing list
         allProducts.addAll(response.products.cast<ProductModel>());
         currentPage++;
       }
 
+      // Create a new ProductListModel with the updated list of products
       productResponse = ProductListModel(
         products: allProducts,
         total: response.total,
@@ -60,6 +72,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         limit: allProducts.length,
       );
 
+      // Emit the new state with the updated product list
       emit(ProductFetchState(
         productResponse: productResponse!,
       ));
@@ -86,6 +99,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
               false;
         }).toList();
 
+        // Convert filtered products to List<ProductModel>
         final filteredProductModels = filteredProducts.cast<ProductModel>();
 
         // Create new ProductListModel with filtered results
@@ -96,6 +110,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           limit: filteredProducts.length,
         );
 
+        // Emit the new state with the filtered product list
         emit(ProductFetchState(productResponse: filteredResponse));
       }
     } catch (e) {
@@ -107,19 +122,27 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       ProductSortEvent event, Emitter<ProductState> emit) async {
     try {
       if (productResponse != null && productResponse!.products.isNotEmpty) {
+        // Sort the products based on the selected sort type
         final products = List<ProductModel>.from(productResponse!.products);
 
         switch (event.sortType) {
+          // Sort by priceLowToHigh:
           case SortType.priceLowToHigh:
             products.sort((a, b) => (a.price ?? 0).compareTo(b.price ?? 0));
             break;
+
+          // Sort by priceHighToLow:
+
           case SortType.priceHighToLow:
             products.sort((a, b) => (b.price ?? 0).compareTo(a.price ?? 0));
             break;
+          // Sort by rating:
           case SortType.rating:
             products.sort((a, b) => (b.rating ?? 0).compareTo(a.rating ?? 0));
             break;
         }
+
+        // Create new ProductListModel with sorted results
 
         final sortedResponse = ProductListModel(
           products: products,
@@ -128,6 +151,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           limit: products.length,
         );
 
+        // Emit the new state with the sorted product list
         emit(ProductFetchState(productResponse: sortedResponse));
       }
     } catch (e) {

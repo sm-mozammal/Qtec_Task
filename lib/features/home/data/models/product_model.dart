@@ -2,7 +2,6 @@
 
 import 'package:qtec_task/features/home/data/models/review_model.dart';
 import 'package:qtec_task/features/home/domain/entities/product.dart';
-import 'package:qtec_task/features/home/domain/entities/review.dart';
 
 class ProductModel extends Product {
   ProductModel(
