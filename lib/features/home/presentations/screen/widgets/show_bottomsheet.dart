@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:qtec_task/features/home/presentations/bloc/product_bloc.dart';
 import 'package:qtec_task/features/home/presentations/bloc/product_event.dart';
 
@@ -7,11 +8,11 @@ void showSortByBottomSheet(BuildContext context) {
   showModalBottomSheet(
     context: context,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
     ),
     builder: (_) {
       return Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.sp),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -21,24 +22,26 @@ void showSortByBottomSheet(BuildContext context) {
               children: [
                 Text(
                   "Sort By",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style:
+                      TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
                 ),
                 InkWell(
                   onTap: () => Navigator.pop(context),
-                  child: Icon(Icons.close, size: 24),
+                  child: Icon(Icons.close, size: 24.sp),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             ListTile(
               contentPadding: EdgeInsets.zero,
               title: Text("Price - High to Low"),
               onTap: () {
+                // Add sorting logic here (Price High to Low)
+                // Trigger the sorting event in the ProductBloc
                 context
                     .read<ProductBloc>()
                     .add(ProductSortEvent(SortType.priceHighToLow));
 
-                // Add sorting logic here
                 Navigator.pop(context);
               },
             ),
@@ -46,11 +49,12 @@ void showSortByBottomSheet(BuildContext context) {
               contentPadding: EdgeInsets.zero,
               title: Text("Price - Low to High"),
               onTap: () {
+                // Add sorting logic here (Price Low to High)
+                // Trigger the sorting event in the ProductBloc
                 context
                     .read<ProductBloc>()
                     .add(ProductSortEvent(SortType.priceLowToHigh));
 
-                // Add sorting logic here
                 Navigator.pop(context);
               },
             ),
@@ -58,11 +62,12 @@ void showSortByBottomSheet(BuildContext context) {
               contentPadding: EdgeInsets.zero,
               title: Text("Rating"),
               onTap: () {
+                // Add sorting logic here (Rating)
+                // Trigger the sorting event in the ProductBloc
                 context
                     .read<ProductBloc>()
                     .add(ProductSortEvent(SortType.rating));
 
-                // Add sorting logic here
                 Navigator.pop(context);
               },
             ),

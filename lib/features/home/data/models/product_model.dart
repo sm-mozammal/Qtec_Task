@@ -1,29 +1,31 @@
 // data/models/product_model.dart
 
+import 'package:qtec_task/features/home/data/models/review_model.dart';
 import 'package:qtec_task/features/home/domain/entities/product.dart';
+import 'package:qtec_task/features/home/domain/entities/review.dart';
 
 class ProductModel extends Product {
-  ProductModel({
-    super.id,
-    super.title,
-    super.description,
-    super.category,
-    super.price,
-    super.discountPercentage,
-    super.rating,
-    super.stock,
-    super.tags,
-    super.brand,
-    super.sku,
-    super.weight,
-    super.warrantyInformation,
-    super.shippingInformation,
-    super.availabilityStatus,
-    super.returnPolicy,
-    super.minimumOrderQuantity,
-    super.images,
-    super.thumbnail,
-  });
+  ProductModel(
+      {super.id,
+      super.title,
+      super.description,
+      super.category,
+      super.price,
+      super.discountPercentage,
+      super.rating,
+      super.stock,
+      super.tags,
+      super.brand,
+      super.sku,
+      super.weight,
+      super.warrantyInformation,
+      super.shippingInformation,
+      super.availabilityStatus,
+      super.returnPolicy,
+      super.minimumOrderQuantity,
+      super.images,
+      super.thumbnail,
+      super.reviews});
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
@@ -46,6 +48,10 @@ class ProductModel extends Product {
       minimumOrderQuantity: json['minimumOrderQuantity'],
       images: json['images'] == null ? [] : List<String>.from(json['images']),
       thumbnail: json['thumbnail'],
+      reviews: json["reviews"] == null
+          ? []
+          : List<ReviewModel>.from(
+              json["reviews"].map((x) => ReviewModel.fromJson(x))),
     );
   }
 
@@ -69,5 +75,9 @@ class ProductModel extends Product {
         "minimumOrderQuantity": minimumOrderQuantity,
         "images": images,
         "thumbnail": thumbnail,
+        "reviews": reviews == null
+            ? []
+            : List<Map<String, dynamic>>.from(
+                (reviews as List<ReviewModel>).map((x) => x.toJson())),
       };
 }

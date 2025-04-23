@@ -41,40 +41,42 @@ class ProductCard extends StatelessWidget {
             placeholder: (context, url) => Container(),
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Text(
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           productName,
           style: TextFontStyle.textStyle12Roboto400,
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: 4.h),
         Row(
           children: [
             Text(
               '\$$discountPrice',
               style: TextFontStyle.textStyle14Roboto400,
             ),
+            SizedBox(width: 4.w),
             Text(
               '\$$price',
               style: TextFontStyle.textStyle10Roboto400UnderLine,
             ),
+            SizedBox(width: 4.w),
             Text(
               '$discountPercentage% OFF',
               style: TextFontStyle.textStyle10Roboto400,
             )
           ],
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: 4.h),
         Row(
           children: [
-            const Icon(Icons.star, color: Colors.amber, size: 12),
-            const SizedBox(width: 4),
+            Icon(Icons.star, color: Colors.amber, size: 12.sp),
+            SizedBox(width: 4.w),
             Text(
               '$rating',
               style: TextFontStyle.textStyle10Roboto400,
             ),
-            const SizedBox(width: 4),
+            SizedBox(width: 4.w),
             Text(
               '($reviews reviews)',
               style: TextFontStyle.textStyle10Roboto400,

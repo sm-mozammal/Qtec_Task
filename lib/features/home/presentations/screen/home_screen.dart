@@ -48,11 +48,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void _sinkLatestValue() {
     _debounceTimer?.cancel();
 
+    // Debounce the search input
     _debounceTimer = Timer(Duration(milliseconds: 500), () {
       final searchText = searchController.text.trim();
       if (searchText.isNotEmpty) {
+        // Trigger search event with the latest value
         context.read<ProductBloc>().add(ProductSearchEvent(searchText));
       } else {
+        // If the search text is empty, fetch all products
         context.read<ProductBloc>().add(ProductSearchEvent(searchText));
       }
     });
@@ -79,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // Search bar
                   Flexible(
                     flex: 5,
                     child: CustomTextFormField(
@@ -88,10 +92,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       controller: searchController,
                     ),
                   ),
+                  // Filter icon
                   Flexible(
                       flex: 1,
                       child: GestureDetector(
                           onTap: () {
+                            // Show sort by bottom sheet
                             showSortByBottomSheet(context);
                           },
                           child: Icon(Icons.filter_list))),
@@ -100,19 +106,25 @@ class _HomeScreenState extends State<HomeScreen> {
               UIHelper.verticalSpaceMedium,
               BlocBuilder<ProductBloc, ProductState>(builder: (context, state) {
                 if (state is ProductLoadingState) {
+                  // Show loading state with shimmer effect
                   return ProductCardShimmer();
                 } else if (state is ProductErrorState) {
+                  // Handle error state and show error message
                   return Center(
                     child: Text(state.errorMessage),
                   );
                 } else if (state is ProductFetchState) {
+                  // Check if the products are empty and show a message
                   if (state.productResponse.products.isEmpty) {
                     return Center(
                       child: Text('No Product Found'),
                     );
                   }
+
+                  // All Products are loaded
                   return _buildProductList(state);
                 } else {
+                  // Default case, show shimmer effect
                   return ProductCardShimmer();
                 }
               }),
@@ -145,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     (product.price! * product.discountPercentage! / 100))
                 .toStringAsFixed(2),
             rating: product.rating?.toStringAsFixed(1),
-            reviews: 100.toString(),
+            reviews: product.reviews?.length.toString() ?? '0',
           );
         });
   }
