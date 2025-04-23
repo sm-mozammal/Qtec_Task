@@ -23,7 +23,7 @@ Welcome to the E-commerce App, your ultimate E-commerce App for seamless shoppin
 | <img src="screenshots/1.png" height="400" width="auto"> | <img src="screenshots/2.png" height="400" width="auto"> | <img src="screenshots/3.png" height="400" width="auto"> |
 
 ## Download APK
-1. Download Link: `https://drive.google.com/file/d/1LnsOPUydyJp0N5fAUtKUGq3tyfp0wrJm/view?usp=sharing`
+1. Download Link: `https://drive.google.com/file/d/1oYhVkQ-hcNS4jYILBHwVHl71WQxJISlD/view?usp=sharing`
 
 ## Installation
 1. Clone the repository: `https://github.com/sm-mozammal/Qtec_Task.git`
