@@ -14,6 +14,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ProductBloc() : super(ProductInitialState()) {
     on<ProductFetchEvent>(fetchProduct);
     on<ProductSearchEvent>(searchProduct);
+    on<ProductSortEvent>(sortProduct);
   }
 
   Future<void> fetchProduct(
@@ -67,6 +68,38 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     } catch (e) {
       emit(ProductErrorState(errorMessage: e.toString()));
+    }
+  }
+
+  Future<void> sortProduct(
+      ProductSortEvent event, Emitter<ProductState> emit) async {
+    try {
+      if (productResponse != null && productResponse!.products.isNotEmpty) {
+        final products = List<ProductModel>.from(productResponse!.products);
+
+        switch (event.sortType) {
+          case SortType.priceLowToHigh:
+            products.sort((a, b) => (a.price ?? 0).compareTo(b.price ?? 0));
+            break;
+          case SortType.priceHighToLow:
+            products.sort((a, b) => (b.price ?? 0).compareTo(a.price ?? 0));
+            break;
+          case SortType.rating:
+            products.sort((a, b) => (b.rating ?? 0).compareTo(a.rating ?? 0));
+            break;
+        }
+
+        final sortedResponse = ProductListModel(
+          products: products,
+          total: products.length,
+          skip: 0,
+          limit: products.length,
+        );
+
+        emit(ProductFetchState(productResponse: sortedResponse));
+      }
+    } catch (e) {
+      emit(ProductErrorState(errorMessage: "Sorting failed: ${e.toString()}"));
     }
   }
 }

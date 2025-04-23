@@ -16,7 +16,9 @@ class ProductLoadingState extends ProductState {
 
 class ProductFetchState extends ProductState {
   final ProductListModel productResponse;
-  const ProductFetchState({required this.productResponse});
+  const ProductFetchState({
+    required this.productResponse,
+  });
 
   @override
   List<Object?> get props => [productResponse];
@@ -27,7 +29,9 @@ class ProductSearchState extends ProductState {
   const ProductSearchState({required this.productResponse});
 
   @override
-  List<Object?> get props => [productResponse];
+  List<Object?> get props => [
+        productResponse,
+      ];
 }
 
 class ProductErrorState extends ProductState {

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +9,7 @@ import 'package:qtec_task/features/home/presentations/bloc/product_bloc.dart';
 import 'package:qtec_task/features/home/presentations/bloc/product_event.dart';
 import 'package:qtec_task/features/home/presentations/bloc/product_state.dart';
 import 'package:qtec_task/features/home/presentations/screen/widgets/product_card.dart';
+import 'package:qtec_task/features/home/presentations/screen/widgets/show_bottomsheet.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController searchController = TextEditingController();
+
   Timer? _debounceTimer;
 
   @override
@@ -43,6 +44,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -51,11 +59,26 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.all(16.sp),
           child: Column(
             children: [
-              CustomTextFormField(
-                isPrefixIcon: true,
-                iconpath: Assets.searchIcon,
-                hintText: 'Search Anything...',
-                controller: searchController,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    flex: 5,
+                    child: CustomTextFormField(
+                      isPrefixIcon: true,
+                      iconpath: Assets.searchIcon,
+                      hintText: 'Search Anything...',
+                      controller: searchController,
+                    ),
+                  ),
+                  Flexible(
+                      flex: 1,
+                      child: GestureDetector(
+                          onTap: () {
+                            showSortByBottomSheet(context);
+                          },
+                          child: Icon(Icons.filter_list))),
+                ],
               ),
               UIHelper.verticalSpaceMedium,
               BlocBuilder<ProductBloc, ProductState>(builder: (context, state) {
@@ -79,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisCount: 2, // Number of columns
                         crossAxisSpacing: 8,
                         mainAxisSpacing: 8,
-                        childAspectRatio: 0.6, // Width / Height ratio
+                        childAspectRatio: 0.58, // Width / Height ratio
                       ),
                       itemBuilder: (context, index) {
                         final product = state.productResponse.products[index];
@@ -88,6 +111,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           price: product.price!.toStringAsFixed(2),
                           productName: product.title!,
                           imageUrl: product.images!.first,
+                          discountPercentage:
+                              product.discountPercentage?.toStringAsFixed(0),
+                          discountPrice: (product.price! -
+                                  (product.price! *
+                                      product.discountPercentage! /
+                                      100))
+                              .toStringAsFixed(2),
+                          rating: product.rating?.toStringAsFixed(1),
+                          reviews: 100.toString(),
                         );
                       });
                 } else {

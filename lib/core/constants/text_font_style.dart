@@ -23,4 +23,30 @@ class TextFontStyle {
     fontWeight: FontWeight.w400,
     height: 1.50,
   );
+
+  static const textStyle14Roboto400 = TextStyle(
+    color: Color(0xFF1F2937),
+    fontSize: 14,
+    fontFamily: 'Roboto',
+    fontWeight: FontWeight.w600,
+    height: 1.50,
+    letterSpacing: 0.07,
+  );
+
+  static const textStyle10Roboto400UnderLine = TextStyle(
+    color: Color(0xFF9CA3AF),
+    fontSize: 10,
+    fontFamily: 'Roboto',
+    fontWeight: FontWeight.w500,
+    decoration: TextDecoration.lineThrough,
+    height: 1.80,
+  );
+
+  static const textStyle10Roboto400 = TextStyle(
+    color: Color(0xFFEA580C),
+    fontSize: 10,
+    fontFamily: 'Roboto',
+    fontWeight: FontWeight.w500,
+    height: 1.80,
+  );
 }

@@ -8,10 +8,23 @@ class ProductEvent extends Equatable {
 }
 
 class ProductFetchEvent extends ProductEvent {
-  const ProductFetchEvent();
+  final int page;
+  final int limit;
+  final bool isPagination;
+
+  const ProductFetchEvent(
+      {this.page = 1, this.limit = 10, this.isPagination = false});
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [page, limit, isPagination];
+}
+
+class ProductSortEvent extends ProductEvent {
+  final SortType sortType;
+  const ProductSortEvent(this.sortType);
+
+  @override
+  List<Object?> get props => [sortType];
 }
 
 class ProductSearchEvent extends ProductEvent {
@@ -21,3 +34,5 @@ class ProductSearchEvent extends ProductEvent {
   @override
   List<Object?> get props => [queary];
 }
+
+enum SortType { priceLowToHigh, priceHighToLow, rating }
