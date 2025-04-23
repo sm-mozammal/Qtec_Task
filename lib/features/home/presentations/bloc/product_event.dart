@@ -13,7 +13,7 @@ class ProductFetchEvent extends ProductEvent {
   final bool isPagination;
 
   const ProductFetchEvent(
-      {this.page = 1, this.limit = 10, this.isPagination = false});
+      {this.page = 1, this.limit = 20, this.isPagination = false});
 
   @override
   List<Object?> get props => [page, limit, isPagination];

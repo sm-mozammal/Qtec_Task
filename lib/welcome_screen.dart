@@ -13,13 +13,7 @@ class WelcomeScreen extends StatelessWidget {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                  // child: Image.asset(
-                  //   Assets.images.splashLogo.path,
-                  // ),
-                  )
-            ]),
+            children: [Text('Welcome To Ecommarce World')]),
       ),
     );
   }

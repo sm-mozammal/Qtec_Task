@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qtec_task/core/utils/toast.dart';
 import 'package:qtec_task/features/home/data/data_sources/product_remote_data_source.dart';
 import 'package:qtec_task/features/home/data/models/product_list_model.dart';
 import 'package:qtec_task/features/home/data/models/product_model.dart';
@@ -11,6 +12,11 @@ import 'package:qtec_task/features/home/presentations/bloc/product_state.dart';
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
   String errorMessage = 'Something Wants Wrong';
   ProductListModel? productResponse;
+  int currentPage = 1;
+  bool isLastPage = false;
+  List<ProductModel> allProducts = [];
+  bool isPaginating = false;
+
   ProductBloc() : super(ProductInitialState()) {
     on<ProductFetchEvent>(fetchProduct);
     on<ProductSearchEvent>(searchProduct);
@@ -19,26 +25,52 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
   Future<void> fetchProduct(
       ProductFetchEvent event, Emitter<ProductState> emit) async {
-    emit(ProductLoadingState());
+    if (event.isPagination) {
+      // Avoid calling again if already paginating
+      if (isPaginating || isLastPage) return;
+      isPaginating = true;
+      ToastUtil.showShortToast('Loading more products...');
+    } else {
+      emit(ProductLoadingState());
+      currentPage = 1;
+      allProducts.clear();
+      isLastPage = false;
+    }
+
     try {
       ProductRemoteDataSource remoteDataSource = ProductRemoteDataSourceImpl();
-      ProductRepositoryImpl todoRepository = ProductRepositoryImpl(
-        remoteDataSource: remoteDataSource,
+      ProductRepositoryImpl repository =
+          ProductRepositoryImpl(remoteDataSource: remoteDataSource);
+      GetProducts getProducts = GetProducts(productRepositoy: repository);
+
+      final response = await getProducts.call(currentPage, event.limit);
+
+      if (response.products.isEmpty) {
+        isLastPage = true;
+        ToastUtil.showLongToast('No more products available');
+      } else {
+        allProducts.addAll(response.products.cast<ProductModel>());
+        currentPage++;
+      }
+
+      productResponse = ProductListModel(
+        products: allProducts,
+        total: response.total,
+        skip: 0,
+        limit: allProducts.length,
       );
-      GetProducts getTodos = GetProducts(productRepositoy: todoRepository);
 
-      ProductListModel response = await getTodos.call(1, 10);
-
-      productResponse = response;
-      emit(ProductFetchState(productResponse: response));
+      emit(ProductFetchState(
+        productResponse: productResponse!,
+      ));
+      isPaginating = false;
     } catch (e) {
       DioException error = e as DioException;
-      if (error.type == DioExceptionType.connectionError) {
-        errorMessage = "Check Your Network Connection";
-      } else {
-        errorMessage = error.response!.data["message"];
-      }
+      errorMessage = error.type == DioExceptionType.connectionError
+          ? "Check Your Network Connection"
+          : error.response?.data["message"] ?? "Something went wrong";
       emit(ProductErrorState(errorMessage: errorMessage));
+      isPaginating = false;
     }
   }
 

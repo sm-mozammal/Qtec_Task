@@ -16,6 +16,7 @@ class ProductLoadingState extends ProductState {
 
 class ProductFetchState extends ProductState {
   final ProductListModel productResponse;
+
   const ProductFetchState({
     required this.productResponse,
   });

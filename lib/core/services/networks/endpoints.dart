@@ -17,8 +17,6 @@ class NetworkConstants {
 class Endpoints {
   Endpoints._();
 
-  static String product(int page, int limit) => "products";
-
-  // static String product(int page, int limit) =>
-  //     "products?limit=$limit&skip=$page";
+  static String product(int page, int limit) =>
+      "products?limit=$limit&skip=$page";
 }

@@ -9,6 +9,7 @@ import 'package:qtec_task/features/home/presentations/bloc/product_bloc.dart';
 import 'package:qtec_task/features/home/presentations/bloc/product_event.dart';
 import 'package:qtec_task/features/home/presentations/bloc/product_state.dart';
 import 'package:qtec_task/features/home/presentations/screen/widgets/product_card.dart';
+import 'package:qtec_task/features/home/presentations/screen/widgets/shimmer.dart';
 import 'package:qtec_task/features/home/presentations/screen/widgets/show_bottomsheet.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   Timer? _debounceTimer;
 
@@ -27,7 +29,20 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     context.read<ProductBloc>().add(ProductFetchEvent());
     searchController.addListener(_sinkLatestValue);
+    _scrollController.addListener(_sinkScrool);
     super.initState();
+  }
+
+  void _sinkScrool() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 100) {
+      // Trigger next page
+      context.read<ProductBloc>().add(ProductFetchEvent(
+            page: 0, // page is handled in bloc
+            limit: 20,
+            isPagination: true,
+          ));
+    }
   }
 
   void _sinkLatestValue() {
@@ -46,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _debounceTimer?.cancel();
+    _scrollController.dispose();
     searchController.dispose();
     super.dispose();
   }
@@ -55,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: SafeArea(
           child: SingleChildScrollView(
+        controller: _scrollController,
         child: Padding(
           padding: EdgeInsets.all(16.sp),
           child: Column(
@@ -83,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
               UIHelper.verticalSpaceMedium,
               BlocBuilder<ProductBloc, ProductState>(builder: (context, state) {
                 if (state is ProductLoadingState) {
-                  return CircularProgressIndicator();
+                  return ProductCardShimmer();
                 } else if (state is ProductErrorState) {
                   return Center(
                     child: Text(state.errorMessage),
@@ -94,36 +111,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Text('No Product Found'),
                     );
                   }
-                  return GridView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: state.productResponse.products.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, // Number of columns
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
-                        childAspectRatio: 0.58, // Width / Height ratio
-                      ),
-                      itemBuilder: (context, index) {
-                        final product = state.productResponse.products[index];
-
-                        return ProductCard(
-                          price: product.price!.toStringAsFixed(2),
-                          productName: product.title!,
-                          imageUrl: product.images!.first,
-                          discountPercentage:
-                              product.discountPercentage?.toStringAsFixed(0),
-                          discountPrice: (product.price! -
-                                  (product.price! *
-                                      product.discountPercentage! /
-                                      100))
-                              .toStringAsFixed(2),
-                          rating: product.rating?.toStringAsFixed(1),
-                          reviews: 100.toString(),
-                        );
-                      });
+                  return _buildProductList(state);
                 } else {
-                  return CircularProgressIndicator();
+                  return ProductCardShimmer();
                 }
               }),
             ],
@@ -131,5 +121,32 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       )),
     );
+  }
+
+  GridView _buildProductList(ProductFetchState state) {
+    return GridView.builder(
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: state.productResponse.products.length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, // Number of columns
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+          childAspectRatio: 0.58, // Width / Height ratio
+        ),
+        itemBuilder: (context, index) {
+          final product = state.productResponse.products[index];
+          return ProductCard(
+            price: product.price!.toStringAsFixed(2),
+            productName: product.title!,
+            imageUrl: product.images!.first,
+            discountPercentage: product.discountPercentage?.toStringAsFixed(0),
+            discountPrice: (product.price! -
+                    (product.price! * product.discountPercentage! / 100))
+                .toStringAsFixed(2),
+            rating: product.rating?.toStringAsFixed(1),
+            reviews: 100.toString(),
+          );
+        });
   }
 }
